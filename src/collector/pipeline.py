@@ -87,6 +87,16 @@ def coletar_uf(
     colunas = resolver_colunas(list(registros[0].keys()))
     log.info("colunas.resolvidas", **{k: v for k, v in colunas.items() if v})
 
+    # Sem a coluna de código não há CSV válido: em geral significa que baixamos a
+    # página de bloqueio anti-bot ou que o layout do CSV mudou. Falha claro em vez
+    # de reportar todas as linhas como 'invalidos'.
+    if not colunas.get("codigo"):
+        raise ValueError(
+            "Cabeçalho do CSV não reconhecido (coluna de código ausente). "
+            "Provável bloqueio anti-bot da Caixa ou mudança de layout. "
+            f"Colunas recebidas: {list(registros[0].keys())[:8]}"
+        )
+
     imoveis: list[ImovelColetado] = []
     for registro in registros:
         imovel = mapear(registro, colunas, uf)

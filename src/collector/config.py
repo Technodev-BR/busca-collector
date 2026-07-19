@@ -29,7 +29,12 @@ class Settings(BaseSettings):
     detalhe_url_template: str = (
         "https://venda-imoveis.caixa.gov.br/sistema/detalhe-imovel.asp?hdnimovel={codigo}"
     )
-    user_agent: str = "busca-busca-collector/0.1 (+contato: dev@technodevbr.com)"
+    # UA de navegador real reduz o bloqueio anti-bot da Caixa; sobrescreva via
+    # COLLECTOR_USER_AGENT se precisar identificar o coletor.
+    user_agent: str = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    )
 
     # Comportamento
     request_timeout: float = 60.0
