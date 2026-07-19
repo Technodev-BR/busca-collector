@@ -1,0 +1,147 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Collector: dry-run (SP)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "collector.main",
+      "args": ["--uf", "SP", "--dry-run", "--log-level", "DEBUG"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    },
+    {
+      "name": "Collector: dry-run (--uf a escolher)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "collector.main",
+      "args": ["--uf", "${input:uf}", "--dry-run", "--log-level", "DEBUG"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    },
+    {
+      "name": "Collector: dry-run (arquivo CSV)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "collector.main",
+      "args": ["--arquivo", "${input:arquivo}", "--dry-run", "--log-level", "DEBUG"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    },
+    {
+      "name": "Collector: enviar ao backend (SP)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "collector.main",
+      "args": ["--uf", "SP", "--log-level", "DEBUG"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    },
+    {
+      "name": "Pytest: arquivo atual",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["${file}", "-v"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    },
+    {
+      "name": "Pytest: todos os testes",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["tests", "-v"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    },
+    {
+      "name": "Python: arquivo atual",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    },
+    {
+      "name": "Ruff: check (projeto)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "ruff",
+      "args": ["check", "."],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    },
+    {
+      "name": "Ruff: check (arquivo atual)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "ruff",
+      "args": ["check", "${file}"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    },
+    {
+      "name": "Ruff: fix (projeto)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "ruff",
+      "args": ["check", ".", "--fix"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    },
+    {
+      "name": "Mypy: check (src)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "mypy",
+      "args": ["src"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    },
+    {
+      "name": "Mypy: check (arquivo atual)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "mypy",
+      "args": ["${file}"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "justMyCode": false
+    }
+  ],
+  "inputs": [
+    {
+      "id": "uf",
+      "type": "promptString",
+      "description": "UF a coletar (ex.: SP, RJ, MG)",
+      "default": "SP"
+    },
+    {
+      "id": "arquivo",
+      "type": "promptString",
+      "description": "Caminho do CSV já baixado (ex.: Lista_imoveis_SP.csv)",
+      "default": "Lista_imoveis_SP.csv"
+    }
+  ]
+}
