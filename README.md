@@ -1,12 +1,20 @@
 # Collector (Python)
 
-Serviço de **coleta** do Busca-Busca. Pipeline: **download → parse → normalize → enviar para a
-API de ingestão** do backend. Não escreve direto no banco (ver
-[ADR-0001](../docs/arquitetura/decisoes/0001-stack-tecnologica.md) e
-[Collector (Python)](../docs/servicos/collector-python.md)).
+Serviço de **coleta** do Busca-Busca. Pipeline: **download → parse → normalize → (opcional)
+enviar para a API de ingestão**.
+
+## Desacoplamento
+
+| Este serviço | Precisa de |
+|---|---|
+| `--dry-run` | Só internet (CSV da Caixa). **Sem** API, banco, fila, Redis. |
+| Envio real | Só HTTP na API (`busca-backend`). **Sem** Postgres/Rabbit/Redis. |
+
+Antes de enviar, o coletor chama `GET /actuator/health`. Se a API estiver fora, aborta com
+erro claro — não depende de Compose compartilhado.
 
 ## Requisitos
-- Python **3.11+** (testado em 3.13).
+- Python **3.11+** (testado em 3.13), **ou** Docker.
 
 ## Instalação (venv + pip)
 
@@ -27,8 +35,6 @@ pip install -e ".[dev]"
 O modo `--dry-run` **não precisa do backend nem de infraestrutura**: baixa o CSV oficial da
 Caixa, parseia e mapeia, e imprime estatísticas.
 
-Depois de instalar (`pip install -e .`), use o comando `collector`:
-
 ```bash
 # baixa o CSV de SP e mostra estatísticas (sem enviar)
 collector --uf SP --dry-run
@@ -39,21 +45,38 @@ collector --arquivo Lista_imoveis_SP.csv --dry-run
 # proxy corporativo quebrando TLS? ignore a verificação (só em dev)
 collector --uf SP --dry-run --insecure
 
-# coleta e ENVIA ao backend (precisa do backend rodando e do token)
+# coleta e ENVIA ao backend (API precisa estar rodando)
 collector --uf SP
 ```
 
 > Alternativa sem o atalho: `python -m collector.main --uf SP --dry-run`.
 
+## Docker (standalone)
+
+```bash
+# build
+docker build -t busca-collector:local .
+
+# dry-run (default do Dockerfile / Compose) — zero dependência de outros serviços
+docker compose run --rm collector --uf SP --dry-run
+
+# envio real — API no host (busca-backend compose na porta 8080)
+docker compose run --rm collector --uf SP --limite 50
+```
+
+A URL padrão no Compose do coletor é `http://host.docker.internal:8080` (API no host).
+Ajuste com `COLLECTOR_BACKEND_BASE_URL` se a API estiver em outra rede/host.
+
 Configuração por ambiente (prefixo `COLLECTOR_`) — copie `.env.example` para `.env`:
 
 | Variável | Default | Descrição |
 |---|---|---|
-| `COLLECTOR_BACKEND_BASE_URL` | `http://localhost:8080` | Base da API de ingestão |
+| `COLLECTOR_BACKEND_BASE_URL` | `http://localhost:8080` | Base da API de ingestão (só no envio) |
 | `COLLECTOR_INTERNAL_TOKEN` | `dev-internal-token` | Header `X-Internal-Token` |
 | `COLLECTOR_CSV_URL_TEMPLATE` | URL da Caixa | `{uf}` é substituído pela UF |
 | `COLLECTOR_BATCH_SIZE` | `500` | Tamanho do lote de envio |
 | `COLLECTOR_VERIFY_TLS` | `true` | Verificação de certificado TLS |
+
 
 ## Testes e qualidade
 
@@ -115,17 +138,19 @@ Extensões recomendadas em `.vscode/extensions.json`: Python, Pylance, Ruff, Myp
 
 ```
 busca-collector/
+  Dockerfile               # imagem standalone
+  docker-compose.yml       # só o job do coletor (sem API/banco/fila)
   pyproject.toml
   src/collector/
     main.py                # CLI (entrypoint)
     config.py              # settings via env (pydantic-settings)
-    logging.py        # logs estruturados (structlog)
+    logging.py             # logs estruturados (structlog)
     dominio/models.py      # ImovelColetado, LoteImoveis (pydantic)
     fontes/caixa/
       downloader.py        # baixa Lista_imoveis_{UF}.csv (httpx + tenacity)
       parser.py            # latin1, pula 2 linhas, ';', números BR
       mapper.py            # linha CSV -> ImovelColetado
-    envio/api_client.py    # POST /internal/ingest/imoveis (X-Internal-Token + Idempotency-Key)
+    envio/api_client.py    # health + POST /internal/ingest/imoveis
     pipeline.py            # orquestra a coleta por UF
   tests/                   # pytest (parser, mapper)
 ```

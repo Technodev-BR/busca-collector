@@ -1,7 +1,8 @@
 """Orquestra a coleta em lote (CSV) por UF: download -> parse -> map -> envio.
 
 Em ``dry_run`` não envia nada ao backend: só baixa/parseia/mapeia e calcula estatísticas
-(útil para rodar localmente sem infraestrutura). Ver docs/servicos/collector-python.md.
+(útil para rodar localmente sem infraestrutura). No envio real, verifica
+``GET /actuator/health`` antes do primeiro lote — o coletor não depende de banco/fila.
 """
 from __future__ import annotations
 
@@ -105,6 +106,8 @@ def coletar_uf(
 
     data_lote = gerado_em or date.today()
     with IngestClient(settings) as client:
+        # Só fala com a API neste ponto (não em dry-run) e só se ela estiver no ar.
+        client.verificar_api_disponivel()
         for indice, chunk in _lotes(imoveis, settings.batch_size):
             lote = LoteImoveis(
                 fonte=settings.fonte, uf=uf.upper(), gerado_em=data_lote, imoveis=chunk

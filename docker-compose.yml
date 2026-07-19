@@ -1,0 +1,16 @@
+# Compose opcional — só o coletor (job one-shot).
+# NÃO sobe banco, fila, Redis nem a API. Rode o busca-backend à parte quando for enviar.
+#
+#   docker compose run --rm collector --uf SP --dry-run
+#   docker compose run --rm collector --uf SP --limite 50
+
+services:
+  collector:
+    build: .
+    image: busca-collector:local
+    environment:
+      COLLECTOR_BACKEND_BASE_URL: ${COLLECTOR_BACKEND_BASE_URL:-http://host.docker.internal:8080}
+      COLLECTOR_INTERNAL_TOKEN: ${COLLECTOR_INTERNAL_TOKEN:-dev-internal-token}
+      COLLECTOR_VERIFY_TLS: ${COLLECTOR_VERIFY_TLS:-true}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

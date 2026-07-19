@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     csv_url_template: str = (
         "https://venda-imoveis.caixa.gov.br/listaweb/Lista_imoveis_{uf}.csv"
     )
+    # Fonte Caixa (detalhe por imóvel — Fase 2)
+    detalhe_url_template: str = (
+        "https://venda-imoveis.caixa.gov.br/sistema/detalhe-imovel.asp?hdnimovel={codigo}"
+    )
     user_agent: str = "busca-busca-collector/0.1 (+contato: dev@technodevbr.com)"
 
     # Comportamento
@@ -32,6 +36,17 @@ class Settings(BaseSettings):
     batch_size: int = 500
     verify_tls: bool = True
     fonte: str = "caixa"
+
+    # Enriquecimento: coleta respeitosa (pausa entre requisições, em segundos)
+    detalhe_pausa_seg: float = 2.0
+
+    # RabbitMQ (consumidor de enriquecimento — só usado no modo consumer)
+    rabbitmq_host: str = "localhost"
+    rabbitmq_port: int = 5672
+    rabbitmq_user: str = "buscabusca"
+    rabbitmq_password: str = "buscabusca"
+    rabbitmq_queue_enriquecimento: str = "imoveis.enriquecimento"
+    rabbitmq_prefetch: int = 1
 
 
 @lru_cache
