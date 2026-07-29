@@ -20,35 +20,16 @@
       "name": "QA: pytest + ruff + mypy",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/.vscode/run_qa.py",
+      "program": "${workspaceFolder}/.venv/bin/python",
+      "args": [
+        "-c",
+        "import subprocess; subprocess.run(['pytest','tests','-v'], check=True); subprocess.run(['ruff','check','.'], check=True); subprocess.run(['mypy','src'], check=True)"
+      ],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
-      "python": "${config:python.defaultInterpreterPath}",
-      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
-      "justMyCode": false
-    },
-    {
-      "name": "Pytest: todos os testes (debug)",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "pytest",
-      "args": ["tests", "-v"],
-      "console": "integratedTerminal",
-      "cwd": "${workspaceFolder}",
-      "python": "${config:python.defaultInterpreterPath}",
-      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
-      "justMyCode": false
-    },
-    {
-      "name": "Pytest: arquivo atual",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "pytest",
-      "args": ["${file}", "-v"],
-      "console": "integratedTerminal",
-      "cwd": "${workspaceFolder}",
-      "python": "${config:python.defaultInterpreterPath}",
-      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
       "justMyCode": false
     }
   ]
