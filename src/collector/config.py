@@ -32,8 +32,7 @@ class Settings(BaseSettings):
     # UA de navegador real reduz o bloqueio anti-bot da Caixa; sobrescreva via
     # COLLECTOR_USER_AGENT se precisar identificar o coletor.
     user_agent: str = (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+        "contato@technodevbr2.com"
     )
 
     # Comportamento
