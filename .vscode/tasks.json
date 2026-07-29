@@ -1,0 +1,59 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "pytest",
+      "type": "shell",
+      "command": "${config:python.defaultInterpreterPath}",
+      "args": ["-m", "pytest", "tests", "-v"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ruff check",
+      "type": "shell",
+      "command": "${config:python.defaultInterpreterPath}",
+      "args": ["-m", "ruff", "check", "."],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "mypy src",
+      "type": "shell",
+      "command": "${config:python.defaultInterpreterPath}",
+      "args": ["-m", "mypy", "src"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ruff + mypy",
+      "dependsOn": ["ruff check", "mypy src"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "QA: pytest + ruff + mypy",
+      "dependsOn": ["pytest", "ruff check", "mypy src"],
+      "dependsOrder": "sequence",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -15,8 +15,8 @@ class HttpSession:
         self.__accept = accept
         self.__accept_language = accept_language
         self.__referer = referer
-        self.__cookies = {}
-        self.__clearance = None
+        self.__cookies: dict[str, str] = {}
+        self.__clearance: dict[str, str] = {}
         self.__request_id = str(uuid4())
 
 

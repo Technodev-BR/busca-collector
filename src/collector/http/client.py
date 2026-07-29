@@ -26,7 +26,7 @@ class HttpClient(Http):
         retry=retry_if_exception_type((httpx.TransportError,HttpRetryException)),
         reraise=True
     )    
-    def _request(self, request: HttpRequest) -> httpx.Response:
+    def _request(self, request: HttpRequest) -> HttpResponse:
         self.__logger.info("http.request", method=request.method, url=request.url)
         
         response = self.__client.request(
@@ -42,10 +42,8 @@ class HttpClient(Http):
         )
         
         for cookie in response.cookies.jar:
-            self.__session.update_cookie(
-                cookie.name,
-                cookie.value
-            )
+            if cookie.value is not None:
+                self.__session.update_cookie(cookie.name, cookie.value)
 
         if response.status_code == 429 or response.status_code >= 500:
             self.__logger.warning("http.retry", status=response.status_code, url=request.url)

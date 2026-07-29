@@ -8,6 +8,7 @@
       "module": "collector.main",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
+      "python": "${config:python.defaultInterpreterPath}",
       "env": {
         "PYTHONPATH": "${workspaceFolder}/src",
         "COLLECTOR_LOCAL_RUN": "false",
@@ -16,27 +17,25 @@
       "justMyCode": false
     },
     {
-      "name": "Collector: local (lê CSVs salvos)",
+      "name": "QA: pytest + ruff + mypy",
       "type": "debugpy",
       "request": "launch",
-      "module": "collector.main",
+      "program": "${workspaceFolder}/.vscode/run_qa.py",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
-      "env": {
-        "PYTHONPATH": "${workspaceFolder}/src",
-        "COLLECTOR_LOCAL_RUN": "true",
-        "COLLECTOR_LOG_LEVEL": "DEBUG"
-      },
+      "python": "${config:python.defaultInterpreterPath}",
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" },
       "justMyCode": false
     },
     {
-      "name": "Pytest: todos os testes",
+      "name": "Pytest: todos os testes (debug)",
       "type": "debugpy",
       "request": "launch",
       "module": "pytest",
       "args": ["tests", "-v"],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
+      "python": "${config:python.defaultInterpreterPath}",
       "env": { "PYTHONPATH": "${workspaceFolder}/src" },
       "justMyCode": false
     },
@@ -48,6 +47,7 @@
       "args": ["${file}", "-v"],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
+      "python": "${config:python.defaultInterpreterPath}",
       "env": { "PYTHONPATH": "${workspaceFolder}/src" },
       "justMyCode": false
     }

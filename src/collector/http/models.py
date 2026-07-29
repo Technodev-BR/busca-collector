@@ -31,11 +31,8 @@ class HttpResponse:
         return 200 <= self.status_code < 300
 
     @property
-    def content_type(self) -> dict[str, str]:
-        return self.headers.get(
-            "Content-Type",
-            ""
-        )        
+    def content_type(self) -> str:
+        return self.headers.get("Content-Type", "")        
 
 @dataclass(slots=True)
 class HttpOptions:
